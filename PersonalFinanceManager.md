@@ -22,7 +22,7 @@ Individuals who want to **track, monitor, and analyze their personal finances** 
 
 **Core Features:**  
 
-- **User Registration/Login:** Secure account creation and access  
+- **User Registration/Login:** Secure account creation and access using JWT authentication  
 - **Add/Edit/Delete Transactions:** Manually record income and expense transactions, including amount, category, date, and notes  
 - **Categorize Transactions:** Organize transactions by categories such as Food, Bills, Salary, etc.  
 - **Dashboard:** Displays total income, total expenses, balance, and charts for quick visualization  
@@ -60,16 +60,16 @@ Individuals who want to **track, monitor, and analyze their personal finances** 
 
 ---
 
-## 4. System Architecture / Components
+## 4. System Components
 
 | Component   | Description |
 |------------|-------------|
-| **Frontend** | Pages/screens: Login/Register, Dashboard, Add/Edit/Delete Transaction, Export PDF. Users manually input all data |
-| **Backend** | APIs for authentication, transactions, dashboard, filtering, PDF export |
-| **Database** | Tables: Users, Categories, Transactions; manually entered data only |
+| **Frontend** | **Next.js** pages/screens with **Tailwind CSS**: Login/Register, Dashboard, Add/Edit/Delete Transaction, Export PDF. Users manually input all data. |
+| **Backend** | **Next.js API Routes**: Handles authentication, transactions, dashboard totals & charts, filtering by time frame, and PDF export. Uses JWT for authentication. |
+| **Database** | **PostgreSQL** (or MySQL) with **Prisma ORM**. Stores Users, Categories, and Transactions. All data is manually entered by users. |
 
 **Communication:**  
-Frontend calls backend APIs → backend queries database → returns data → frontend renders charts and tables  
+Frontend calls Next.js API routes → backend queries database → returns data → frontend renders charts, tables, and PDF exports  
 
 ---
 
@@ -98,25 +98,25 @@ Frontend calls backend APIs → backend queries database → returns data → fr
 
 ---
 
-## 6. API Design
+## 6. API Design (Next.js API Routes)
 
 | Endpoint | Method | Description | Input | Output |
 |----------|--------|-------------|-------|--------|
-| /auth/register | POST | Register user | name, email, password | success/failure message |
-| /auth/login | POST | User login | email, password | token/session |
-| /transactions | GET | List transactions | optional filter (daily/week/month/year) | transaction list |
-| /transactions | POST | Add transaction | type, amount, category, date, notes | created transaction |
-| /transactions/:id | PUT | Edit transaction | transaction fields | updated transaction |
-| /transactions/:id | DELETE | Delete transaction | transaction id | success/failure message |
-| /dashboard | GET | Get totals and charts | optional filter | summary data + chart data |
-| /export/pdf | GET | Export filtered transactions | filter | PDF file |
+| /api/auth/register | POST | Register user | name, email, password | success/failure message |
+| /api/auth/login | POST | User login | email, password | JWT token/session |
+| /api/transactions | GET | List transactions | optional filter (daily/week/month/year) | transaction list |
+| /api/transactions | POST | Add transaction | type, amount, category, date, notes | created transaction |
+| /api/transactions/[id] | PUT | Edit transaction | transaction fields | updated transaction |
+| /api/transactions/[id] | DELETE | Delete transaction | transaction id | success/failure message |
+| /api/dashboard | GET | Get totals and charts | optional filter | summary data + chart data |
+| /api/export/pdf | GET | Export filtered transactions | filter | PDF file |
 
 ---
 
 ## 7. Non-functional Requirements
 
 - **Performance:** Dashboard updates within 2 seconds after adding a transaction  
-- **Security:** Passwords hashed, secure login, token-based authentication  
+- **Security:** Passwords hashed, JWT-based login, secure API routes  
 - **Scalability:** Support multiple users and concurrent sessions  
 - **Usability:** Easy-to-use forms and clear charts  
 - **Maintainability:** Well-structured code for easy future updates  
@@ -128,7 +128,7 @@ Frontend calls backend APIs → backend queries database → returns data → fr
 - Users can register and log in successfully  
 - Users can add, edit, and delete transactions  
 - Dashboard shows correct totals, balances, and charts  
-- Filtering by daily, weekly, monthly, or yearly works correctly  
+- Filtering by daily/weekly/monthly/yearly works correctly  
 - PDF exports match filtered data  
 - All core flows tested manually and automatically  
 
@@ -138,7 +138,7 @@ Frontend calls backend APIs → backend queries database → returns data → fr
 
 | Week | Tasks |
 |------|-------|
-| 1 | Project setup, database creation, auth API & pages |
+| 1 | Project setup, Next.js + Tailwind setup, database creation, auth API & pages |
 | 2 | Transactions API, Add/Edit/Delete pages |
 | 3 | Dashboard API + frontend, filtering implementation |
 | 4 | PDF export, testing, bug fixes, deploy MVP |
