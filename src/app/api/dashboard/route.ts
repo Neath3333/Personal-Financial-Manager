@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
 import { getUserFromToken } from '@/lib/auth';
+import { memoryStorage } from '@/lib/memory-storage';
 
 export async function GET(request: NextRequest) {
   try {
@@ -79,23 +79,28 @@ export async function GET(request: NextRequest) {
     }
 
     // Get all transactions for the user within the date range
-    const transactions = await prisma.transaction.findMany({
-      where: {
-        userId: user.id,
-        ...dateFilter
-      },
-      include: {
-        category: {
-          select: {
-            name: true,
-            type: true
-          }
+    const transactions = memoryStorage.transactions
+      .filter(t => t.userId === user.id)
+      .filter(t => {
+        if (Object.keys(dateFilter).length === 0) return true;
+
+        const transactionDate = new Date(t.date);
+
+        if (dateFilter.date?.gte && dateFilter.date?.lte) {
+          return transactionDate >= dateFilter.date.gte && transactionDate <= dateFilter.date.lte;
+        } else if (dateFilter.date?.gte) {
+          return transactionDate >= dateFilter.date.gte;
+        } else if (dateFilter.date?.lte) {
+          return transactionDate <= dateFilter.date.lte;
         }
-      },
-      orderBy: {
-        date: 'desc'
-      }
-    });
+
+        return true;
+      })
+      .map(t => ({
+        ...t,
+        category: memoryStorage.categories.find(c => c.id === t.categoryId)
+      }))
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     // Calculate totals
     const totals = transactions.reduce((acc, transaction) => {
@@ -111,6 +116,8 @@ export async function GET(request: NextRequest) {
 
     // Calculate category breakdowns
     const categoryBreakdown = transactions.reduce((acc, transaction) => {
+      if (!transaction.category) return acc;
+
       const categoryName = transaction.category.name;
       const key = `${transaction.type}_${categoryName}`;
 
