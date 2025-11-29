@@ -1,154 +1,236 @@
-# SDD: Personal Finance Manager
+# Personal Finance Manager Project
+
+**Project Type**: Learning / Personal Project | **Framework**: Next.js + Tailwind CSS + Prisma | **Status**: Planning Complete
 
 ---
 
-## 1. Introduction / Project Overview
+## Project Overview
 
-**Project Name:** Personal Finance Manager  
+The Personal Finance Manager is a tool for **manually tracking income and expenses**, managing budgets, and generating reports. Users can filter transactions by **daily, weekly, monthly, or yearly** periods. Totals, balances, and charts are calculated automatically.
 
-**Purpose:**  
-The Personal Finance Manager is an application designed to help users **track income and manage expenses manually**. The system automatically calculates totals, balances, and generates visual reports. Users can filter transactions by daily, weekly, monthly, or yearly periods to analyze spending patterns.  
+**Target Users**: People who want to **track and analyze personal finances manually**.
 
-**Target Users:**  
-Individuals who want to **track, monitor, and analyze their personal finances** without connecting directly to a bank account.
-
-**Scope:**  
-- **Included:** Manual transaction input, dashboards with charts, filters, PDF export  
-- **Excluded:** Bank integration, automatic bank transaction imports  
+**Scope**:  
+- **Included**: Manual transaction input, dashboard, charts, filtering, PDF export  
+- **Excluded**: Bank integration or automatic transaction import  
 
 ---
 
-## 2. MVP Plan / Functional Requirements
+## Learning Objectives
 
-**Core Features:**  
+This project focuses on learning:
 
-- **User Registration/Login:** Secure account creation and access using JWT authentication  
-- **Add/Edit/Delete Transactions:** Manually record income and expense transactions, including amount, category, date, and notes  
-- **Categorize Transactions:** Organize transactions by categories such as Food, Bills, Salary, etc.  
-- **Dashboard:** Displays total income, total expenses, balance, and charts for quick visualization  
-- **Filter Spending by Time Frame:** View transactions and totals filtered by day, week, month, or year  
-- **Export Data as PDF:** Generate PDF reports of transactions and summaries for record-keeping or sharing  
+- **Fullstack Development**: Next.js frontend, API routes backend, PostgreSQL database with Prisma  
+- **Structured Planning & Documentation**: SDD, database design, API design  
+- **Incremental Development**: Step-by-step feature implementation  
+- **Data Management**: CRUD operations, filtering, reporting  
+- **UX/UI Design**: Responsive dashboards with charts  
+- **PDF Export & Reporting**: Generating user reports  
 
-**Optional Features for Later:**  
+---
+
+## Project Structure
+
+personal-finance-manager/
+├── prisma/
+│ └── schema.prisma # Database schema
+├── pages/
+│ ├── api/
+│ │ ├── auth/
+│ │ │ ├── login.js
+│ │ │ └── register.js
+│ │ ├── transactions.js
+│ │ ├── dashboard.js
+│ │ └── export.js
+│ ├── index.js # Dashboard page
+│ ├── login.js
+│ └── register.js
+├── components/
+│ ├── TransactionForm.js
+│ ├── TransactionList.js
+│ └── DashboardCharts.js
+├── styles/
+│ └── globals.css
+├── utils/
+│ └── api.js
+├── package.json
+└── README.md
+
+---
+
+## MVP Plan
+
+### Core Features
+
+- User registration/login (JWT authentication)  
+- Add/Edit/Delete income and expense transactions  
+- Categorize transactions (Food, Bills, Salary, etc.)  
+- Dashboard with totals, balance, and charts  
+- Filter transactions by daily, weekly, monthly, yearly  
+- Export filtered data as PDF  
+
+### Optional Features
 
 - Budgets per category with alerts  
 - Recurring transactions  
 - Multi-currency support  
-- Dark mode or theme customization  
+- Dark mode / theme customization  
 
 ---
 
-## 3. User Flows / Use Cases
+## User Flows
 
-### 3.1 Add Transaction Flow
+### Add Transaction Flow
 1. User logs in  
-2. Clicks **“Add Transaction”**  
-3. Selects transaction type (**Income/Expense**)  
-4. Enters amount, category, date, and optional notes  
-5. Saves → system automatically updates totals, balance, and charts  
+2. Clicks **Add Transaction**  
+3. Selects type (Income/Expense)  
+4. Enters amount, category, date, notes  
+5. Saves → system updates totals, balance, and charts  
 
-### 3.2 Dashboard / View Records Flow
-1. User opens the **Dashboard**  
-2. Views total income, total expenses, and current balance  
-3. Visualizes spending by category in charts  
-4. Filters transactions by day, week, month, or year  
+### Dashboard / View Records Flow
+1. User opens dashboard  
+2. Views totals and balance  
+3. Views charts of spending by category  
+4. Filters transactions by day/week/month/year  
 
-### 3.3 Optional Additional Flows
-- **User Registration/Login Flow:** Register and log in to access personal account securely  
-- **Edit/Delete Transaction Flow:** Modify or remove transactions; dashboard updates automatically  
-- **Export PDF Flow:** Download filtered transaction reports in PDF format  
-
----
-
-## 4. System Components
-
-| Component   | Description |
-|------------|-------------|
-| **Frontend** | **Next.js** pages/screens with **Tailwind CSS**: Login/Register, Dashboard, Add/Edit/Delete Transaction, Export PDF. Users manually input all data. |
-| **Backend** | **Next.js API Routes**: Handles authentication, transactions, dashboard totals & charts, filtering by time frame, and PDF export. Uses JWT for authentication. |
-| **Database** | **PostgreSQL** (or MySQL) with **Prisma ORM**. Stores Users, Categories, and Transactions. All data is manually entered by users. |
-
-**Communication:**  
-Frontend calls Next.js API routes → backend queries database → returns data → frontend renders charts, tables, and PDF exports  
+### Optional Flows
+- Edit/Delete Transaction  
+- Export PDF  
+- Registration/Login  
 
 ---
 
-## 5. Database Design
+## System Architecture / Components
+
+Frontend (Next.js + Tailwind CSS)
+|
+v
+API Routes (Next.js backend)
+|
+v
+Database (PostgreSQL + Prisma)
+
+yaml
+Copy code
+
+| Component | Description |
+|-----------|-------------|
+| Frontend  | Pages: Login/Register, Dashboard, Add/Edit/Delete Transaction, Export PDF |
+| Backend   | API Routes: authentication, transactions, dashboard, PDF export |
+| Database  | Tables: Users, Categories, Transactions |
+
+---
+
+## Database Design
 
 ### Users
-- `id` (Primary Key)  
+- `id` (PK)  
 - `name`  
 - `email`  
 - `password_hashed`  
 
 ### Categories
-- `id` (Primary Key)  
+- `id` (PK)  
 - `name`  
 
 ### Transactions
-- `id` (Primary Key)  
-- `user_id` (Foreign Key → Users)  
-- `category_id` (Foreign Key → Categories)  
+- `id` (PK)  
+- `user_id` (FK → Users)  
+- `category_id` (FK → Categories)  
 - `type` (Income/Expense)  
 - `amount`  
 - `date`  
 - `notes`  
 
-> **Note:** `user_id` ensures each transaction is linked to the correct user. `date` allows filtering by daily, weekly, monthly, or yearly periods.  
+> `user_id` ensures transactions are linked to specific users. `date` supports filtering for daily, weekly, monthly, or yearly views.
 
 ---
 
-## 6. API Design (Next.js API Routes)
+## API Design
 
-| Endpoint | Method | Description | Input | Output |
-|----------|--------|-------------|-------|--------|
-| /api/auth/register | POST | Register user | name, email, password | success/failure message |
-| /api/auth/login | POST | User login | email, password | JWT token/session |
-| /api/transactions | GET | List transactions | optional filter (daily/week/month/year) | transaction list |
-| /api/transactions | POST | Add transaction | type, amount, category, date, notes | created transaction |
-| /api/transactions/[id] | PUT | Edit transaction | transaction fields | updated transaction |
-| /api/transactions/[id] | DELETE | Delete transaction | transaction id | success/failure message |
-| /api/dashboard | GET | Get totals and charts | optional filter | summary data + chart data |
-| /api/export/pdf | GET | Export filtered transactions | filter | PDF file |
-
----
-
-## 7. Non-functional Requirements
-
-- **Performance:** Dashboard updates within 2 seconds after adding a transaction  
-- **Security:** Passwords hashed, JWT-based login, secure API routes  
-- **Scalability:** Support multiple users and concurrent sessions  
-- **Usability:** Easy-to-use forms and clear charts  
-- **Maintainability:** Well-structured code for easy future updates  
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| /api/auth/register | POST | Register a new user |
+| /api/auth/login    | POST | User login |
+| /api/transactions  | GET  | List transactions (filterable) |
+| /api/transactions  | POST | Add transaction |
+| /api/transactions/[id] | PUT | Edit transaction |
+| /api/transactions/[id] | DELETE | Delete transaction |
+| /api/dashboard     | GET  | Get totals & charts |
+| /api/export/pdf    | GET  | Export filtered transactions |
 
 ---
 
-## 8. Success Criteria / Testing
+## Development Workflow
 
-- Users can register and log in successfully  
-- Users can add, edit, and delete transactions  
-- Dashboard shows correct totals, balances, and charts  
-- Filtering by daily/weekly/monthly/yearly works correctly  
-- PDF exports match filtered data  
-- All core flows tested manually and automatically  
+### Phase 1: Project Setup
+- Initialize Next.js project  
+- Setup Tailwind CSS  
+- Setup Prisma and database  
+
+### Phase 2: Authentication
+- Implement registration/login API routes  
+- Build login/register pages  
+
+### Phase 3: Transaction Management
+- Add/Edit/Delete API routes  
+- Build Transaction Form & List components  
+
+### Phase 4: Dashboard
+- Build dashboard components with charts  
+- Implement filtering by time period  
+
+### Phase 5: PDF Export
+- Implement export API route  
+- Generate PDF for filtered transactions  
+
+### Phase 6: Testing & Validation
+- Manual testing of all features  
+- Verify totals, balance, charts, filters, and PDF export  
 
 ---
 
-## 9. Timeline / Milestones (Optional)
+## Non-functional Requirements
+
+- **Performance:** Dashboard updates <2s  
+- **Security:** JWT authentication, hashed passwords  
+- **Scalability:** Multi-user support  
+- **Usability:** Clean, responsive UI  
+- **Maintainability:** Modular, readable code  
+
+---
+
+## Timeline / Milestones
 
 | Week | Tasks |
 |------|-------|
-| 1 | Project setup, Next.js + Tailwind setup, database creation, auth API & pages |
-| 2 | Transactions API, Add/Edit/Delete pages |
-| 3 | Dashboard API + frontend, filtering implementation |
-| 4 | PDF export, testing, bug fixes, deploy MVP |
+| 1 | Project setup, database schema, auth pages/API |
+| 2 | Transactions CRUD API & frontend |
+| 3 | Dashboard & filtering |
+| 4 | PDF export, testing, deploy MVP |
 
 ---
 
-## 10. Future Improvements (Optional)
+## Future Improvements
 
-- Budget tracking with alerts  
+- Budgets per category with alerts  
 - Recurring transactions  
 - Multi-currency support  
-- Dark mode / themes  
-- Cloud sync for multiple devices  
+- Dark mode  
+- Cloud sync  
+
+---
+
+## Learning Outcomes
+
+- Fullstack development (Next.js + API + database)  
+- Structured planning and SDD documentation  
+- Incremental implementation and testing  
+- UX/UI dashboard design with charts and PDF export  
+- Progressive enhancement workflow  
+
+---
+
+**Project Status**: Planning Complete  
+**Primary Focus**: Fullstack SDD Implementation  
+**Estimated Completion**: 4–5 weeks (MVP)
