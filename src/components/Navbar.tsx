@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { getAuthUser, clearAuth } from '@/utils/auth';
+import { CurrencyDollarIcon } from '@heroicons/react/24/outline';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -25,7 +26,8 @@ export default function Navbar() {
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
               <Link href="/" className="text-white text-xl font-bold flex items-center">
-                💰 Personal Finance Manager
+                <CurrencyDollarIcon className="h-6 w-6 mr-2" />
+                Personal Finance Manager
               </Link>
             </div>
             {user && (

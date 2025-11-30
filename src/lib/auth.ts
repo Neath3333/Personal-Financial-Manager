@@ -1,7 +1,8 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { memoryStorage } from './memory-storage';
+import { PrismaClient } from '@prisma/client';
 
+const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-key';
 
 export const generateToken = (userId: string): string => {
@@ -24,7 +25,9 @@ export const comparePassword = async (password: string, hashedPassword: string):
 export const getUserFromToken = async (token: string) => {
   try {
     const decoded = verifyToken(token);
-    const user = memoryStorage.users.find(u => u.id === decoded.id);
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.id }
+    });
 
     if (user) {
       return {

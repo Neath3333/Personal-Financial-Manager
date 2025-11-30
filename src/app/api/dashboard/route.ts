@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserFromToken } from '@/lib/auth';
-import { memoryStorage } from '@/lib/memory-storage';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
@@ -78,29 +80,19 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Get all transactions for the user within the date range
-    const transactions = memoryStorage.transactions
-      .filter(t => t.userId === user.id)
-      .filter(t => {
-        if (Object.keys(dateFilter).length === 0) return true;
-
-        const transactionDate = new Date(t.date);
-
-        if (dateFilter.date?.gte && dateFilter.date?.lte) {
-          return transactionDate >= dateFilter.date.gte && transactionDate <= dateFilter.date.lte;
-        } else if (dateFilter.date?.gte) {
-          return transactionDate >= dateFilter.date.gte;
-        } else if (dateFilter.date?.lte) {
-          return transactionDate <= dateFilter.date.lte;
-        }
-
-        return true;
-      })
-      .map(t => ({
-        ...t,
-        category: memoryStorage.categories.find(c => c.id === t.categoryId)
-      }))
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    // Get all transactions for the user within the date range from database
+    const transactions = await prisma.transaction.findMany({
+      where: {
+        userId: user.id,
+        ...dateFilter
+      },
+      include: {
+        category: true
+      },
+      orderBy: {
+        date: 'desc'
+      }
+    });
 
     // Calculate totals
     const totals = transactions.reduce((acc, transaction) => {

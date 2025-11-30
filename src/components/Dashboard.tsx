@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { dashboardAPI, exportAPI } from '@/utils/api';
 import { DashboardData, FilterType } from '@/types';
 import { formatCurrency, formatDate } from '@/utils/auth';
+import { DocumentArrowDownIcon, ArrowTrendingUpIcon, ArrowTrendingDownIcon, CurrencyDollarIcon } from '@heroicons/react/24/outline';
 
 export default function Dashboard() {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
@@ -88,7 +89,7 @@ export default function Dashboard() {
               disabled={exporting}
               className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
             >
-              {exporting ? 'Exporting...' : '📄 Export PDF'}
+              {exporting ? 'Exporting...' : <><DocumentArrowDownIcon className="h-4 w-4 mr-1 inline" /> Export PDF</>}
             </button>
           </div>
         </div>
@@ -101,7 +102,7 @@ export default function Dashboard() {
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                  <span className="text-green-600 text-sm">↑</span>
+                  <ArrowTrendingUpIcon className="h-4 w-4 text-green-600" />
                 </div>
               </div>
               <div className="ml-5 w-0 flex-1">
@@ -121,7 +122,7 @@ export default function Dashboard() {
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                  <span className="text-red-600 text-sm">↓</span>
+                  <ArrowTrendingDownIcon className="h-4 w-4 text-red-600" />
                 </div>
               </div>
               <div className="ml-5 w-0 flex-1">
@@ -141,7 +142,7 @@ export default function Dashboard() {
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                  <span className="text-blue-600 text-sm">💰</span>
+                  <CurrencyDollarIcon className="h-4 w-4 text-blue-600" />
                 </div>
               </div>
               <div className="ml-5 w-0 flex-1">

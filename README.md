@@ -1,3 +1,4 @@
+
 # Personal Finance Manager
 
 A comprehensive Next.js web application for tracking personal income and expenses with manual data entry, dashboard analytics, and PDF export capabilities.

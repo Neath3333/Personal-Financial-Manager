@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { hashPassword, generateToken } from '@/lib/auth';
-import { memoryStorage } from '@/lib/memory-storage';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,7 +25,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user already exists
-    const existingUser = memoryStorage.users.find(u => u.email === email);
+    const existingUser = await prisma.user.findUnique({
+      where: { email }
+    });
 
     if (existingUser) {
       return NextResponse.json(
@@ -34,15 +38,13 @@ export async function POST(request: NextRequest) {
 
     // Hash password and create user
     const hashedPassword = await hashPassword(password);
-    const user = {
-      id: `user_${Date.now()}`,
-      name,
-      email,
-      password: hashedPassword,
-      createdAt: new Date(),
-    };
-
-    memoryStorage.users.push(user);
+    const user = await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+      }
+    });
 
     // Generate JWT token
     const token = generateToken(user.id);

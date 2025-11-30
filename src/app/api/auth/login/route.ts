@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { comparePassword, generateToken } from '@/lib/auth';
-import { memoryStorage } from '@/lib/memory-storage';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,7 +18,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Find user
-    const user = memoryStorage.users.find(u => u.email === email);
+    const user = await prisma.user.findUnique({
+      where: { email }
+    });
 
     if (!user) {
       return NextResponse.json(
